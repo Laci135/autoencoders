@@ -21,17 +21,32 @@ class Autoencoder(modules.Composite):
     def _forward(self, X):
         for level in range(levels):
             for layer in range(layers):
-                layer = get(f"encoder_conv{level}_{layer}")
-                X = layer(X)
-            layer = get(f"encoder_conv{level}_maxpool", Maxpool(n))
-            X = layer(X)
-            for layer in reversed(range(layers)):
-                layer = get(f"decoder_conv{level}_{layer}")
-                X = layer(X)
-            layer = get(f"decoder_upsample{level}")
-            X = layer(X)
-        layer = get("mse")
-        return layer(X)
+                l = get(f"encoder_conv{level}_{layer}")
+                X = l(X)
+            l = get(f"encoder_maxpool{level}", Maxpool(n))
+            X = l(X)
+        for level in reversed(range(levels)):
+            for layer in range(layers):
+                l = get(f"decoder_conv{level}_{layer}")
+                X = l(X)
+            l = get(f"decoder_upsample{level}")
+            X = l(X)
+        l = get("mse")
+        return l(X)
             
     def backprop(self, lr, loss):
-        
+        l = get("mse")
+        loss = l.backprop(lr)
+        for level in range(levels):
+            l = get(f"decoder_upsample{level}")
+            loss = l.backprop(loss)
+            for layer in reversed(range(layers)):
+                l = get(f"decoder_conv{level}_{layer}")
+                loss = l.backprop(loss)
+        for level in reversed(range(levels)):
+            l = get(f"encoder_maxpool{level}")
+            loss = l.backprop(loss)
+            for layer in reversed(range(layers)):
+                l = get(f"encoder_conv{level}_{layer}")
+                loss = l.backprop(loss)
+

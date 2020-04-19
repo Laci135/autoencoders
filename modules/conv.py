@@ -24,10 +24,16 @@ class Conv(modules.Module):
 
     def _forward(self, X):
         assert X.shape[1:3] == (self.i, self.H, self.W), f"Conv module: Please fix input dimensions: {X.shape} -> {(X.shape[0], self.i, self.H, self.W)}"
-    
-        for h in np.r_[0 : (H+sum(self.padding))/stride + 1 : stride]:
-            for w in np.r_[0 : (W+sum(self.padding))/stride + 1 : stride]:
-                print("hello")
+        
+        B = X.shape[0]
+        
+        out = np.array((
+
+        for b in range(B):
+            for i in range(self.I):
+                for h in np.r_[0 : (H+sum(self.padding))/stride + 1 : stride]:
+                    for w in np.r_[0 : (W+sum(self.padding))/stride + 1 : stride]:
+                        
 
 
 
