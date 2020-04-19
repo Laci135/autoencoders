@@ -12,5 +12,5 @@ class Module:
              self._build()
         self._forward(X)
 
-    def backprop(self, lr, loss=None):
+    def backprop(self, lr, grad=None):
         raise Exception("This method is abstract. Module does not define backpropagation.")
