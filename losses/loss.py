@@ -2,6 +2,9 @@ import modules
 
 class Loss(modules.Module):
 
+    def __init__(self):
+        super(Loss, self).__init__()
+
     def _forward(self, X):
         _calculate(X)
         _calulate_grad(X)

@@ -1,5 +1,7 @@
 class Module:
-    built: bool
+
+    def __init__(self):
+        self.__built = False
 
     def _build(self, X):
         raise Exception("This method is abstract. Module does not define a build method.")
@@ -8,9 +10,11 @@ class Module:
         raise Exception("This method is abstract. Module does not define a forward method.")
 
     def __call__(self, X):
-        if not self.built:
-             self._build()
-        self._forward(X)
+        if not self.__built:
+            self._build(X)
+            self.__built = True
+        
+        return self._forward(X)
 
     def backprop(self, lr, grad=None):
         raise Exception("This method is abstract. Module does not define backpropagation.")

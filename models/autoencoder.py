@@ -1,52 +1,54 @@
-import modules.module
-import modules.conv
+import modules
+import losses
 
 class Autoencoder(modules.Composite):
    
     def __init__(self, levels, layers, thickness, n):
-        self. levels = levels
+        super(Autoencoder, self).__init__()
+        self.levels = levels
         self.layers = layers
         self.n = n
+        self.thickness = thickness
 
     def _build(self, X):
-        for level in range(levels):
-            for layer in range(layers):
-                add(f"encoder_conv{level}_{layer}", Conv(n, thickness*(2**level + 1), padding="same"))
-            add(f"encoder_maxpool{level}", Maxpool(n))
-            for layer in reversed(range(layers)):
-                add(f"decoder_conv{level}_{layer}", Conv(n, thickness*(2**level - 1), padding="same"))
-            add(f"decoder_upsample{level}", Upsample(n))
-        add("mse", MSE())
+        for level in range(self.levels):
+            for layer in range(self.layers):
+                self.add(f"encoder_conv{level}_{layer}", modules.Conv(self.n, self.thickness*(2**level + 1), padding="same"))
+            self.add(f"encoder_maxpool{level}", modules.Maxpool(self.n))
+            for layer in reversed(range(self.layers)):
+                self.add(f"decoder_conv{level}_{layer}", modules.Conv(self.n, self.thickness*(2**level - 1), padding="same"))
+            self.add(f"decoder_upsample{level}", modules.Upsample(self.n))
+        self.add("mse", losses.MSE())
 
     def _forward(self, X):
-        for level in range(levels):
-            for layer in range(layers):
-                l = get(f"encoder_conv{level}_{layer}")
+        for level in range(self.levels):
+            for layer in range(self.layers):
+                l = self.get(f"encoder_conv{level}_{layer}")
                 X = l(X)
-            l = get(f"encoder_maxpool{level}", Maxpool(n))
+            l = self.get(f"encoder_maxpool{level}")
             X = l(X)
-        for level in reversed(range(levels)):
-            for layer in range(layers):
-                l = get(f"decoder_conv{level}_{layer}")
+        for level in reversed(range(self.levels)):
+            for layer in range(self.layers):
+                l = self.get(f"decoder_conv{level}_{layer}")
                 X = l(X)
-            l = get(f"decoder_upsample{level}")
+            l = self.get(f"decoder_upsample{level}")
             X = l(X)
-        l = get("mse")
+        l = self.get("mse")
         return l(X)
             
     def backprop(self, lr, grad):
-        l = get("mse")
+        l = self.get("mse")
         grad = l.backprop(lr)
         for level in range(levels):
-            l = get(f"decoder_upsample{level}")
+            l = self.get(f"decoder_upsample{level}")
             grad = l.backprop(grad)
-            for layer in reversed(range(layers)):
-                l = get(f"decoder_conv{level}_{layer}")
+            for layer in reversed(range(self.layers)):
+                l = self.get(f"decoder_conv{level}_{layer}")
                 grad = l.backprop(grad)
-        for level in reversed(range(levels)):
-            l = get(f"encoder_maxpool{level}")
+        for level in reversed(range(self.levels)):
+            l = self.get(f"encoder_maxpool{level}")
             grad = l.backprop(grad)
-            for layer in reversed(range(layers)):
-                l = get(f"encoder_conv{level}_{layer}")
+            for layer in reversed(range(self.layers)):
+                l = self.get(f"encoder_conv{level}_{layer}")
                 grad = l.backprop(grad)
 

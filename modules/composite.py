@@ -3,11 +3,12 @@ import modules
 class Composite(modules.Module):
     
     def __init__(self):
-        __components = {}
+        super(Composite, self).__init__()
+        self.__components = {}
 
     def add(self, name, component):
-        self._components[name] = component
+        self.__components[name] = component
 
-    def get(name):
-        assert name in __components, f"Component not found: {name}"
-        return __components[name]
+    def get(self, name):
+        assert name in self.__components, f"Component not found: {name}"
+        return self.__components[name]
