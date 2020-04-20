@@ -4,7 +4,7 @@ import math
 import scipy.io
 import matplotlib.pyplot as plt
 
-images = np.rollaxis(np.array(scipy.io.loadmat("SVHN.mat")['X']), axis = 3, start=0)
+images = np.rollaxis(np.array(scipy.io.loadmat("datasets/SVHN.mat")['X']), axis = 3, start=0)
 
 noise = np.random.binomial(300, 0.5, images.shape)-150
 

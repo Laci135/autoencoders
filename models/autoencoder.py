@@ -14,10 +14,10 @@ class Autoencoder(modules.Composite):
         for level in range(self.levels):
             for layer in range(self.layers):
                 self.add(f"encoder_conv{level}_{layer}", modules.Conv(self.n, self.thickness*(2**level + 1), padding="same"))
-            self.add(f"encoder_maxpool{level}", modules.Maxpool(self.n))
+            self.add(f"encoder_maxpool{level}", modules.Maxpool(2))
             for layer in reversed(range(self.layers)):
                 self.add(f"decoder_conv{level}_{layer}", modules.Conv(self.n, self.thickness*(2**level - 1), padding="same"))
-            self.add(f"decoder_upsample{level}", modules.Upsample(self.n))
+            self.add(f"decoder_upsample{level}", modules.Upsample(2))
         self.add("mse", losses.MSE())
 
     def _forward(self, X):

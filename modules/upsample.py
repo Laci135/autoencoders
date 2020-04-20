@@ -1,4 +1,5 @@
 import modules
+import numpy as np
 
 class Upsample(modules.Module):
 
@@ -7,34 +8,37 @@ class Upsample(modules.Module):
         self.n = n
 
     def _build(self, X):
-        self.I = X.shape[1]
-        self.H = X.shape[2]
-        self.W = X.shape[3]
+        self.H = X.shape[1]
+        self.W = X.shape[2]
+        self.I = X.shape[3]
 
-    def __fill(data, at, val):
+    def __fill(self, data, at, val):
         for h in range(n):
             for w in range(n):
                 data[at[0], at[1], at[2]+h, at[3]+w] = val
 
     def _forward(self, X):
-        assert X.size[1:3] == (self.H, self.W)
+        B = X.shape[0]
+        assert X.shape == (B, self.H, self.W, self.I), f"Upsample module: Please fix input dimensions: {X.shape} -> {(B, self.H, self.W, self.I)}"
 
-        B = X.size[0]
-        out = np.zeros((B, self.i, self.H*n, self.W*n))
+        self.HH = self.H*self.n
+        self.WW = self.W*self.n
+
+        out = np.zeros((B, self.HH, self.WW, self.I))
        
         for b in range(B):
-            for i in range(self.I):
-                for h in range(self.H):
-                    for w in range(self.W):
-                        val = X[b, i, h, w]
-                        __fill(out, (b, i, h, w), val)
+            for h in range(self.H):
+                for w in range(self.W):
+                    for i in range(self.I):
+                        val = X[b, h, w, i]
+                        self.__fill(out, (b, h, w, i), val)
     
     def __readavg(data, at):
         total = 0
         for h in range(n):
             for w in range(n):
                 total += data[at[0], at[1], at[2]+h, at[3]+w]
-        return total / (n*n)
+        return total / (self.n*self.n)
 
 
     def backprop(self, lr, loss):
@@ -46,5 +50,5 @@ class Upsample(modules.Module):
             for i in range(self.I):
                 for h in range(self.H):
                     for w in range(self.W):
-                        val = __readavg(loss, (b, i, h, w))
+                        val = self.__readavg(loss, (b, i, h, w))
                         out[b, i, h, w] = val
