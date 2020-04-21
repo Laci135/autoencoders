@@ -15,7 +15,7 @@ class Upsample(modules.Module):
     def __fill(self, data, at, val):
         for h in range(self.n):
             for w in range(self.n):
-                data[at[0], at[1]+h, at[2]+w, at[3]] = val
+                data[at[0], at[1]*self.n+h, at[2]*self.n+w, at[3]] = val
 
     def _forward(self, X):
         B = X.shape[0]
@@ -39,10 +39,10 @@ class Upsample(modules.Module):
         total = 0
         for h in range(self.n):
             for w in range(self.n):
-                total += data[at[0], at[1]+h, at[2]+w, at[3]]
+                total += data[at[0], at[1]*self.n+h, at[2]*self.n+w, at[3]]
         return total
 
-    def backprop(self, lr, grad):
+    def backprop(self, grad):
         assert grad is not None, "Upsample module: Grad is None."
         B = grad.shape[0]
 
@@ -55,4 +55,4 @@ class Upsample(modules.Module):
                         val = self.__readtotal(grad, (b, h, w, i))
                         out[b, h, w, i] = val
 
-        return out
+        return out / (self.n*self.n)

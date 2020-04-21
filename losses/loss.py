@@ -9,7 +9,7 @@ class Loss(modules.Module):
         self.__last = X
         return X
 
-    def backprop(self, lr, grad):
+    def backprop(self, grad):
         return grad
 
     def _calculate(self, X, Y=None):

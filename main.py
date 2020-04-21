@@ -28,8 +28,8 @@ for e in range(epochs):
         loss_total = model.get("mse").total(Y_target)
         gradient = model.get("mse").get_grad(Y_target)
 
-        model.backprop(lr, gradient)
-
+        
+        model.backprop(gradient * lr)
         print(f"\repoch {e} -- {b}/{batches} -- loss: {loss_total}", end="")
 
     print(f"epoch {e} done: ")
