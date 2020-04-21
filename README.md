@@ -3,6 +3,8 @@ Neural networks homework BME-MIT 2020 spring
 
 Welp I tried what happens if I implement an autoencoder using pure numpy. Sadly performance was poor so I switched to keras...
 
+SVHN dataset: http://ufldl.stanford.edu/housenumbers/
+
 Sample output -- SVHN dataset -- 20s/batch, ~6k batches/epoch :
 
 epoch 0 started\
