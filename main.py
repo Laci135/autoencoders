@@ -14,11 +14,11 @@ model = models.Autoencoder(levels = 2, layers = 2, thickness = 2, n = 3)
 
 epochs = 100
 batch_size = 12
-lr = 0.0001
+lr = 0.00000001
 
 batches = math.ceil(images.shape[0] / batch_size)
 for e in range(epochs):
-    print (f"epoch {e} started", end="")
+    print (f"epoch {e} started")
     for b in range(batches):
         X = noisy_images[batch_size*b:batch_size*(b+1)]
         Y_target = images[batch_size*b:batch_size*(b+1)]
@@ -30,6 +30,6 @@ for e in range(epochs):
 
         
         model.backprop(gradient * lr)
-        print(f"\repoch {e} -- {b}/{batches} -- loss: {loss_total}", end="")
+        print(f"epoch {e} -- {b}/{batches} -- loss: {loss_total}")
 
     print(f"epoch {e} done: ")

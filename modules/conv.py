@@ -60,9 +60,10 @@ class Conv(modules.Module):
         amount = grad[at[0], at[1], at[2], at[4]] / (self.n*self.n)
         for h in range(self.n):
             for w in range(self.n):
-                to_filter[h, w, at[3], at[4]] += amount * self.__last[at[0], at[1]+h, at[2]+w, at[3]]
-                to_inp[at[0], at[1]+h, at[2]+w, at[3]] += amount * self.__filter[h, w, at[3], at[4]]
-                
+                last_val = self.__last[at[0], at[1]+h, at[2]+w, at[3]]
+                to_filter[h, w, at[3], at[4]] += amount * last_val
+                filter_val =  self.__filter[h, w, at[3], at[4]]
+                to_inp[at[0], at[1]+h, at[2]+w, at[3]] += amount * filter_val               
 
     def backprop(self, grad):
         B = grad.shape[0]
@@ -80,8 +81,9 @@ class Conv(modules.Module):
 
         inp_grad = inp_grad[:, self.padding[0]:self.H+self.padding[0], self.padding[0]:self.W+self.padding[0]]
 
-        self.__filter /= self.H*self.W
+        filter_grad /= self.H*self.W
         self.__filter += filter_grad
-        return inp_grad
+
+        return inp_grad / (self.n*self.n)
 
         
