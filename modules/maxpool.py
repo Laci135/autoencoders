@@ -46,20 +46,20 @@ class Maxpool(modules.Module):
    
     def __fillgrad(self, data, at, val):
         h, w = self.mask[at]
-
-        data[at[0], at[1], at[2]*self.n+h, at[3]*self.n+w]
+        data[at[0], at[1]*self.n+h, at[2]*self.n+w, at[3]]
 
     def backprop(self, lr, grad):
-        assert loss.shape == (self.B, math.ceil(self.H/self.n), math.ceil(self.H/self.n), self.I), f"Maxpool module: Wrong backprop dimensions. Fix: {loss.shape} -> {(self.B, math.ceil(self.H/self.n), math.ceil(self.H/self.n), self.I)}"
-
+        assert grad.shape == (self.B, self.HH, self.WW, self.I), f"Maxpool module: Wrong backprop dimensions. Fix: {grad.shape} -> {(self.B, self.HH, self.WW, self.I)}"
+        
         out = np.zeros((self.B, self.H, self.W, self.I))
 
         for b in range(self.B):
-            for h in range(self.H):
-                for w in range(self.W):
+            for h in range(self.HH):
+                for w in range(self.WW):
                     for i in range(self.I):
+                        at = (b, h, w, i)
                         val = grad[at]
-                        __fillgrad(out, at, val)
+                        self.__fillgrad(out, at, val)
         
         return out
 

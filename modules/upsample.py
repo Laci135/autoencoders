@@ -13,9 +13,9 @@ class Upsample(modules.Module):
         self.I = X.shape[3]
 
     def __fill(self, data, at, val):
-        for h in range(n):
-            for w in range(n):
-                data[at[0], at[1], at[2]+h, at[3]+w] = val
+        for h in range(self.n):
+            for w in range(self.n):
+                data[at[0], at[1]+h, at[2]+w, at[3]] = val
 
     def _forward(self, X):
         B = X.shape[0]
@@ -32,23 +32,27 @@ class Upsample(modules.Module):
                     for i in range(self.I):
                         val = X[b, h, w, i]
                         self.__fill(out, (b, h, w, i), val)
+
+        return out
     
-    def __readavg(data, at):
+    def __readtotal(self, data, at):
         total = 0
-        for h in range(n):
-            for w in range(n):
-                total += data[at[0], at[1], at[2]+h, at[3]+w]
-        return total / (self.n*self.n)
+        for h in range(self.n):
+            for w in range(self.n):
+                total += data[at[0], at[1]+h, at[2]+w, at[3]]
+        return total
 
+    def backprop(self, lr, grad):
+        assert grad is not None, "Upsample module: Grad is None."
+        B = grad.shape[0]
 
-    def backprop(self, lr, loss):
-        assert loss is not None, "Upsample module: Loss is None."
-
-        out = np.zeros((B, self.I, self.H, self.W))
+        out = np.zeros((B, self.H, self.W, self.I))
 
         for b in range(B):
             for i in range(self.I):
                 for h in range(self.H):
                     for w in range(self.W):
-                        val = self.__readavg(loss, (b, i, h, w))
-                        out[b, i, h, w] = val
+                        val = self.__readtotal(grad, (b, h, w, i))
+                        out[b, h, w, i] = val
+
+        return out

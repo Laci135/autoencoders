@@ -6,27 +6,27 @@ class Loss(modules.Module):
         super(Loss, self).__init__()
 
     def _forward(self, X):
-        _calculate(X)
-        _calulate_grad(X)
+        self.__last = X
         return X
 
-    def backprop(self, lr, loss):
-        return X
+    def backprop(self, lr, grad):
+        return grad
 
-    def _calculate(self, X, Y):
+    def _calculate(self, X, Y=None):
         raise Exception("This method is abstract. The loss function is not defined.")
 
-    def _calculate_gradient(self, X, Y):
+    def _calculate_gradient(self, X, Y=None):
         raise Exception("This method is abstract. The gradient function is not defined.")
-
-    def total(self):
-        raise Exception("This method is abstract. The printable form of the loss function cannot be calculated")
     
-    def get(self):
-        return __loss
+    def _calculate_total(self, X, Y=None):
+        raise Exception("This method is abstract. The total gradient function is not defined.")
 
-    def _set(self, loss):
-        __loss = loss
+    def total(self, Y=None):
+        return self._calculate_total(self.__last, Y)
 
-    def _set_grad(self, grad):
-        __grad = grad
+    def get(self, Y=None):
+        return self._calculate(self.__last, Y)
+
+    def get_grad(self, Y=None):
+        return self._calculate_grad(self.__last, Y)
+
