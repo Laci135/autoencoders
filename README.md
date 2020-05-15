@@ -1,3 +1,5 @@
+> Noise filtering (convolutional and FC, SVHN dataset) and VAE (convolutional, KMNIST, MNIST) have been added to the keras directory.
+
 # autoencoders
 Neural networks homework BME-MIT 2020 spring
 
