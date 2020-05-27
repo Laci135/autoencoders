@@ -6,6 +6,8 @@ Neural networks homework BME-MIT 2020 spring
 I have tried what happens if I implement an autoencoder using pure numpy. Sadly performance was poor so I switched to keras...
 
 SVHN dataset: http://ufldl.stanford.edu/housenumbers/
+MNIST dataset: http://yann.lecun.com/exdb/mnist/
+KMNIST dataset: https://github.com/rois-codh/kmnist
 
 Sample output -- SVHN dataset -- 20s/batch, ~6k batches/epoch :
 
