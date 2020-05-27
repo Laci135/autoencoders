@@ -9,7 +9,13 @@ SVHN dataset: http://ufldl.stanford.edu/housenumbers/
 MNIST dataset: http://yann.lecun.com/exdb/mnist/
 KMNIST dataset: https://github.com/rois-codh/kmnist
 
-Sample output -- SVHN dataset -- 20s/batch, ~6k batches/epoch :
+###Running
+Pure numpy implementation:
+`python3 __main__.py`
+
+The notebooks in the keras directory may be run in any Jupyter environment.
+
+Sample output of the pure numpy implementation -- SVHN dataset -- 20s/batch, ~6k batches/epoch :
 
 epoch 0 started\
 conv -- 113.26181821469908\
